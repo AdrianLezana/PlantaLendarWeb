@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OrchidCare IoT - Monitoreo de Invernadero</title>
+  <title>Calendario IoT - Monitoreo de Invernadero</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <!-- Librería oficial de Supabase -->
@@ -18,17 +18,17 @@
       <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
         <i class="fa-solid fa-seedling text-emerald-400 text-2xl"></i>
         <div>
-          <h1 class="font-bold text-lg tracking-wide text-white">OrchidCare <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">IoT 4.0</span></h1>
+          <h1 class="font-bold text-lg tracking-wide text-white">Calendario <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">IoT 4.0</span></h1>
           <p class="text-xs text-slate-400">Control de Invernadero</p>
         </div>
       </div>
 
       <nav class="mt-6 px-4 space-y-2">
-        <a href="#" class="flex items-center gap-3 px-4 py-3 bg-emerald-600/20 text-emerald-400 rounded-lg font-medium border border-emerald-500/30">
+        <a id="nav-dashboard" href="#" class="flex items-center gap-3 px-4 py-3 bg-emerald-600/20 text-emerald-400 rounded-lg font-medium border border-emerald-500/30">
           <i class="fa-solid fa-gauge-high w-5"></i>
           <span>Datos en Tiempo Real</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-lg transition">
+        <a id="nav-calendario" href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-lg transition">
           <i class="fa-solid fa-calendar-check w-5"></i>
           <span>Calendario de Riego</span>
         </a>
@@ -36,7 +36,7 @@
           <i class="fa-solid fa-wifi w-5"></i>
           <span>Conectar Sensores</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-lg transition">
+        <a id="nav-historial" href="#" class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-lg transition">
           <i class="fa-solid fa-clock-rotate-left w-5"></i>
           <span>Registro Histórico</span>
         </a>
@@ -66,15 +66,7 @@
         <p class="text-sm text-slate-400">Parámetros óptimos objetivo: Humedad ~80% | Temperatura 18°C – 24°C (Noche/Día)</p>
       </div>
 
-      <!-- Notificación Visual (Decorativa) -->
       <div class="flex items-center gap-4">
-        <div class="bg-amber-500/10 border border-amber-500/40 text-amber-300 px-4 py-2.5 rounded-lg flex items-center gap-3 shadow-lg">
-          <i class="fa-solid fa-bell animate-bounce text-amber-400"></i>
-          <div class="text-xs">
-            <p class="font-bold">Recordatorio de Riego (RF2)</p>
-            <p>Esperando alertas del sistema...</p>
-          </div>
-        </div>
         <div class="h-10 w-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white shadow">
           AD
         </div>
@@ -82,6 +74,7 @@
     </header>
 
     <!-- Sección 1: Visualización en Tiempo Real -->
+    <section id="vista-dashboard">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <!-- Tarjeta Humedad -->
       <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 relative overflow-hidden">
@@ -89,8 +82,8 @@
           <div>
             <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Humedad Relativa (RF4)</span>
             <div class="flex items-baseline gap-2 mt-2">
-              <h3 class="text-4xl font-extrabold text-white">79.4%</h3>
-              <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Óptimo (~80%)</span>
+              <h3 id="val-humedad" class="text-4xl font-extrabold text-white">-- %</h3>
+              <span id="status-humedad" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Óptimo (~80%)</span>
             </div>
           </div>
           <div class="p-3 bg-cyan-500/10 rounded-lg text-cyan-400">
@@ -108,8 +101,8 @@
           <div>
             <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Temperatura (RF7)</span>
             <div class="flex items-baseline gap-2 mt-2">
-              <h3 class="text-4xl font-extrabold text-white">21.5°C</h3>
-              <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">En Rango</span>
+              <h3 id="val-temperatura" class="text-4xl font-extrabold text-white">-- °C</h3>
+              <span id="status-temperatura" class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">En Rango</span>
             </div>
           </div>
           <div class="p-3 bg-amber-500/10 rounded-lg text-amber-400">
@@ -126,21 +119,40 @@
         <div class="flex justify-between items-start">
           <div>
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Estado Actuador</span>
-            <h3 class="text-3xl font-extrabold text-white mt-2">En Espera</h3>
+            <h3 id="texto-actuador" class="text-3xl font-extrabold text-white mt-2">En Espera</h3>
           </div>
           <div class="p-3 bg-emerald-500/10 rounded-lg text-emerald-400">
             <i class="fa-solid fa-faucet-drip text-2xl"></i>
           </div>
         </div>
         <div class="mt-5 flex gap-2">
-          <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition">
+          <button id="btn-riego-manual" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition">
             <i class="fa-solid fa-play mr-1"></i> Forzar Riego Manual
           </button>
         </div>
       </div>
     </div>
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 mt-6">
+      <h3 class="text-lg font-bold text-white mb-4">Últimas 10 lecturas</h3>
+      <div class="overflow-x-auto max-h-96 overflow-y-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+          <tr class="border-b border-slate-700 text-xs uppercase text-slate-400 bg-slate-900/50">
+            <th class="py-3 px-4">Fecha y Hora</th>
+            <th class="py-3 px-4">Humedad</th>
+            <th class="py-3 px-4">Temperatura</th>
+            <th class="py-3 px-4">Estado</th>
+          </tr>
+          </thead>
+          <tbody id="tabla-ultimas-lecturas" class="divide-y divide-slate-700/60 text-sm">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </section>
 
     <!-- Sección 2: Calendario (RF1) y Sensores (RF3) -->
+    <section id="vista-calendario" class="hidden">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
       <!-- RF1: Formulario Funcional JavaScript -->
@@ -196,27 +208,47 @@
             <p class="text-xs text-slate-400">Nodos emparejados en la red actual</p>
           </div>
         </div>
-        <div class="space-y-3">
-          <div class="flex items-center justify-between p-3 bg-slate-900/90 rounded-lg border border-slate-700">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg"><i class="fa-solid fa-wifi"></i></div>
-              <div>
-                <p class="text-sm font-semibold text-white">Sensor Humedad/Temp DHT22</p>
-                <p class="text-xs text-slate-400">Protocolo: Wi-Fi | MAC: A4:CF:12:88:3B:01</p>
-              </div>
-            </div>
-            <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-medium">En línea</span>
-          </div>
-        </div>
+        <div id="contenedor-sensores" class="space-y-3"></div>
       </div>
     </div>
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 mt-6">
+      <h3 class="text-lg font-bold text-white mb-4">Riegos Programados</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+          <tr class="border-b border-slate-700 text-xs uppercase text-slate-400 bg-slate-900/50">
+            <th class="py-3 px-4">Días</th>
+            <th class="py-3 px-4">Hora</th>
+            <th class="py-3 px-4">Estado</th>
+            <th class="py-3 px-4">Acciones</th>
+          </tr>
+          </thead>
+          <tbody id="tabla-calendarios" class="divide-y divide-slate-700/60 text-sm">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </section>
 
     <!-- Sección 3: Registro Histórico -->
+    <section id="vista-historial" class="hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
-      <div class="mb-4">
+      <div class="mb-4 flex justify-between items-center gap-4">
         <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-database text-purple-400 mr-2"></i>Registro Histórico (RF5)</h3>
+        <select id="select-frecuencia" class="bg-slate-900 border border-slate-700 text-sm rounded px-2 py-1 text-slate-300">
+          <option value="1">Cada 1 min</option>
+          <option value="30">Cada 30 min</option>
+          <option value="60">Cada 1 hora</option>
+          <option value="120">Cada 2 horas</option>
+          <option value="180">Cada 3 horas</option>
+        </select>
       </div>
-      <div class="overflow-x-auto">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <input type="date" id="filtro-inicio" class="bg-slate-900 border border-slate-700 text-slate-300 rounded px-3 py-1.5">
+        <input type="date" id="filtro-fin" class="bg-slate-900 border border-slate-700 text-slate-300 rounded px-3 py-1.5">
+        <button id="btn-filtrar" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded">Filtrar</button>
+      </div>
+      <div class="overflow-x-auto max-h-96 overflow-y-auto">
         <table class="w-full text-left border-collapse">
           <thead>
           <tr class="border-b border-slate-700 text-xs uppercase text-slate-400 bg-slate-900/50">
@@ -226,17 +258,12 @@
             <th class="py-3 px-4">Estado</th>
           </tr>
           </thead>
-          <tbody class="divide-y divide-slate-700/60 text-sm">
-          <tr class="hover:bg-slate-700/30">
-            <td class="py-3 px-4">06-11-2026 13:00</td>
-            <td class="py-3 px-4 font-semibold text-cyan-400">79.4 %</td>
-            <td class="py-3 px-4 font-semibold text-amber-400">21.5 °C</td>
-            <td class="py-3 px-4"><span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Óptimo</span></td>
-          </tr>
+          <tbody id="tabla-historial" class="divide-y divide-slate-700/60 text-sm">
           </tbody>
         </table>
       </div>
     </div>
+    </section>
   </main>
 </div>
 
